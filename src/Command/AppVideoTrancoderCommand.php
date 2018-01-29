@@ -25,8 +25,7 @@ class AppVideoTrancoderCommand extends Command
         $upload_destination = $input->getArgument('arg1');
         $file = $input->getArgument('arg2');
         $file_name = pathinfo($file, PATHINFO_FILENAME);
-        $file_ext = pathinfo($file, PATHINFO_EXTENSION);
-        $ffmpegCommand = "/usr/bin/ffmpeg -i {$upload_destination}/{$file} -f mp4 -vcodec libx264 -preset slow -profile:v main -acodec aac -strict -2 {$upload_destination}/{$file_name}_newer.{$file_ext} -hide_banner";
+        $ffmpegCommand = "/usr/bin/ffmpeg -i {$upload_destination}/{$file} -f mp4 -vcodec libx264 -preset slow -profile:v main -acodec aac -strict -2 {$upload_destination}/{$file_name}_newer.mp4 -hide_banner";
         $process = new Process($ffmpegCommand);
         $process->start();
     }
