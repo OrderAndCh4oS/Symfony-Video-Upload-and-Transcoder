@@ -4,10 +4,8 @@ namespace App\Listener;
 
 use App\Entity\Video;
 use Psr\Log\LoggerInterface;
-use Symfony\Bundle\FrameworkBundle\Console\Application;
-use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\Process\Process;
 use Vich\UploaderBundle\Event\Event;
 use Vich\UploaderBundle\Mapping\PropertyMapping;
 
@@ -42,23 +40,14 @@ class VideoUploaderListener
         $object = $event->getObject();
         /** @var PropertyMapping $mapping */
         $mapping = $event->getMapping();
-        $application = new Application($this->kernel);
-        $application->setAutoExit(false);
-        $input = new ArrayInput(
-            array(
-                'command' => 'app:video-trancoder',
-                // (optional) define the value of command arguments
-                'arg1' => $mapping->getUploadDestination(),
-                'arg2' => $object->getVideoName(),
-            )
+        $destination = $mapping->getUploadDestination();
+        $name = $object->getVideoName();
+        $root = $this->kernel->getRootDir();
+        $environment = $this->kernel->getEnvironment();
+        $process = new Process(
+            "php {$root}/../bin/console app:video-transcoder {$destination} {$name} --env=".$environment
         );
-        // You can use NullOutput() if you don't need the output
-        $output = new NullOutput();
-        try {
-            $application->run($input, $output);
-        } catch (\Exception $e) {
-            $this->logger->error('Failed to run VideoUploaderListener application');
-        }
+        $process->start();
     }
 
 }

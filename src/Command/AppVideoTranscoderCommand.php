@@ -8,9 +8,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Process;
 
-class AppVideoTrancoderCommand extends Command
+class AppVideoTranscoderCommand extends Command
 {
-    protected static $defaultName = 'app:video-trancoder';
+    protected static $defaultName = 'app:video-transcoder';
     /**
      * @var string
      */
