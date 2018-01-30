@@ -11,6 +11,13 @@ use Symfony\Component\Process\Process;
 class AppVideoTrancoderCommand extends Command
 {
     protected static $defaultName = 'app:video-trancoder';
+    /**
+     * @var string
+     */
+    private $command = "";
+    private $file;
+    private $upload_destination;
+    private $file_name;
 
     protected function configure()
     {
@@ -22,29 +29,35 @@ class AppVideoTrancoderCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $upload_destination = $input->getArgument('arg1');
-        $file = $input->getArgument('arg2');
-        $ffmpegCommand = $this->ffmpegScript($upload_destination, $file, 1);
-        $process = new Process($ffmpegCommand);
+        $this->upload_destination = $input->getArgument('arg1');
+        $this->file = $input->getArgument('arg2');
+        $this->file_name = pathinfo($this->file, PATHINFO_FILENAME);
+        $this->ffmpegScript();
+        $process = new Process($this->command);
         $process->start();
     }
 
-    /**
-     * @param $upload_destination
-     * @param $file
-     * @return string
-     */
-    private function ffmpegScript($upload_destination, $file, $pass): string
+    private function ffmpegScript()
     {
-        $file_name = pathinfo($file, PATHINFO_FILENAME);
-        $settings = "-vcodec libx264 -preset slow -crf 18 -b:v 3000k -maxrate 4000k -bufsize 512k -c:a aac -b:a 128k -strict -2";
-        $command = "/usr/bin/ffmpeg -y -i {$upload_destination}/{$file} ";
-        $command .= "-f mp4 {$settings} -hide_banner ";
-        $command .= "{$upload_destination}/{$file_name}_new.mp4 -hide_banner";
+        $this->command = "/usr/bin/ffmpeg -y -i {$this->upload_destination}/{$this->file} ";
+        $this->command .= $this->addSize(360);
+        $this->command .= $this->addSize(720);
+        $this->command .= $this->addSize(1080);
+        $this->command .= "-hide_banner";
         $f = fopen('/var/www/video-uploader/var/ffmpeg.txt', 'w');
-        fwrite($f, $command);
+        fwrite($f, $this->command);
         fclose($f);
+    }
 
-        return $command;
+    /**
+     * @param $height
+     */
+    private function addSize($height)
+    {
+        $settings = "-vcodec libx264 -preset slow -crf 18 -b:v 3000k -maxrate 4000k -bufsize 512k -c:a aac -b:a 128k -strict -2";
+        $width = $height * (16 / 9);
+        $dimensions = "{$width}x{$height}";
+        $this->command .= "-s {$dimensions} -f mp4 {$settings} ";
+        $this->command .= "{$this->upload_destination}/{$this->file_name}_{$dimensions}.mp4 ";
     }
 }
