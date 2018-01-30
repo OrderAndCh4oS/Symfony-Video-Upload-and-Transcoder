@@ -44,9 +44,6 @@ class AppVideoTrancoderCommand extends Command
         $this->command .= $this->addSize(720);
         $this->command .= $this->addSize(1080);
         $this->command .= "-hide_banner";
-        $f = fopen('/var/www/video-uploader/var/ffmpeg.txt', 'w');
-        fwrite($f, $this->command);
-        fclose($f);
     }
 
     /**
@@ -54,10 +51,10 @@ class AppVideoTrancoderCommand extends Command
      */
     private function addSize($height)
     {
-        $settings = "-vcodec libx264 -preset slow -crf 18 -b:v 3000k -maxrate 4000k -bufsize 512k -c:a aac -b:a 128k -strict -2";
+        $settings = "-f mp4 -vcodec libx264 -preset slow -crf 18 -b:v 3000k -maxrate 4000k -bufsize 512k -c:a aac -b:a 128k -strict -2";
         $width = $height * (16 / 9);
         $dimensions = "{$width}x{$height}";
-        $this->command .= "-s {$dimensions} -f mp4 {$settings} ";
+        $this->command .= "-s {$dimensions} {$settings} ";
         $this->command .= "{$this->upload_destination}/{$this->file_name}_{$dimensions}.mp4 ";
     }
 }
