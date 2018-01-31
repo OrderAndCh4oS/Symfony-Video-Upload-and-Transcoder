@@ -1,0 +1,15 @@
+# Read the documentation: https://github.com/1up-lab/OneupFlysystemBundle/tree/master/Resources/doc/index.md
+oneup_flysystem:
+    adapters:
+        oacc.flysystem_adapter:
+            awss3v3:
+                client: oacc.s3_client
+                bucket: "%env(resolve:AWS_BUCKET)%"
+                prefix: 'videos'
+    filesystems:
+        oacc:
+            adapter: oacc.flysystem_adapter
+            alias: oacc_filesystem
+            visibility: public
+            mount:   prefix
+

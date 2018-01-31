@@ -30,3 +30,14 @@ services:
     App\Listener\VideoUploaderListener:
         tags:
             - { name: kernel.event_listener, event: vich_uploader.post_upload }
+
+
+    oacc.s3_client:
+        class: Aws\S3\S3Client
+        arguments:
+            -
+                version: '2006-03-01' # or 'latest'
+                region: "eu-west-1" # 'eu-central-1' for example
+                credentials:
+                    key: "%env(resolve:AWS_KEY)%"
+                    secret: "%env(resolve:AWS_SECRET)%"
