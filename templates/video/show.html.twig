@@ -1,5 +1,5 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    {{ video.videoName }}
+    <video controls src="{{ video.videoName | videoPath('640x360') }}"></video>
 {% endblock %}

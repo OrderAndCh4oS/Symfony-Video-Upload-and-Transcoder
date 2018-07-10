@@ -41,3 +41,8 @@ services:
                 credentials:
                     key: "%env(resolve:AWS_KEY)%"
                     secret: "%env(resolve:AWS_SECRET)%"
+
+
+    App\Twig\VideoPath:
+        tags:
+            - { name: twig.extension }

@@ -5,10 +5,10 @@ namespace App\Controller;
 use App\Entity\Video;
 use App\Form\VideoType;
 use Psr\Log\LoggerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
 class VideoController extends Controller
 {
@@ -53,6 +53,9 @@ class VideoController extends Controller
      */
     public function show(Video $video)
     {
+        $videoPathParts = pathinfo($video->getVideoName());
+        $awsVideoFile = $videoPathParts['filename'].'_1280x720'.$videoPathParts['extension'];
+
         return $this->render('video/show.html.twig', compact('video'));
     }
 }
